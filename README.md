@@ -1,27 +1,62 @@
-# React + TypeScript + Vite
+# Entendimento do createStore
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Observação sobre os listeners
 
-Currently, two official plugins are available:
+Os listeners ficam ouvindo o observable e assim que houver uma mudança, eles são disparados.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Importação do `globalStore`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Quando o `globalStore` é importado, o `createStore` é executado.
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+## O que acontece quando a função `createStore` é chamada?
+
+- `createState` é armazenada na memória.
+- Variáveis `state` e `listeners` são criadas.
+- Funções `subscribe`, `notify`, `setState` e `getState` são criadas na memória.
+- Por fim, `state = createState(setState)`, ou seja, a função `createState` é executada, adicionando valor no `state`.
+
+---
+
+## Fluxo do `createStore`
+
+1. `fn createStore`
+2. `fn (setState) => T`
+3. `fn setState: SetStateFn<T>`
+
+---
+
+## O que ocorre no `createState`
+
+Quando chamamos:
+
+```typescript
+(createState) => ({
+  todos: [],
+  user: null,
+  login: () => {
+    setState({
+      user: {
+        email: 'rgmelo',
+        name: 'Renan',
+      },
+    });
+  },
+  logout: () => {
+    setState({
+      user: null,
+    });
+  },
+});
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Ao fazer isso, passamos a função setState criada e já em memória como parâmetro da função createState.
+
+A função createState retorna um objeto, e este objeto se torna o valor inicial do state.
+
+### Observação final
+
+Aqui, o setState foi passado por parâmetro, o mesmo setState definido no createStore, e ele vai ser executado apenas quando o login ou logout forem chamados.

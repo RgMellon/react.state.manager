@@ -1,7 +1,11 @@
-type SetterState<T> = (state: T) => Partial<T>;
+type SetterFn<T> = (state: T) => Partial<T>;
+type SetStateFn<T> = (partialState: Partial<T> | SetterFn<T>) => void;
 
-export function createStore<T>(initialState: T) {
-  let state = initialState;
+export function createStore<T>(
+  createState: (setStateParam: SetStateFn<T>) => T,
+) {
+  let state: T;
+
   const listeners = new Set<() => void>();
 
   function subscribe(listener: () => void) {
@@ -16,7 +20,7 @@ export function createStore<T>(initialState: T) {
     listeners.forEach((listener) => listener());
   }
 
-  function setState(partialState: Partial<T> | SetterState<T>) {
+  function setState(partialState: Partial<T> | SetterFn<T>) {
     const newValue =
       typeof partialState === 'function' ? partialState(state) : partialState;
 
@@ -31,6 +35,8 @@ export function createStore<T>(initialState: T) {
   function getState() {
     return state;
   }
+
+  state = createState(setState);
 
   return {
     setState,
