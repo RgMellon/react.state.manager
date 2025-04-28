@@ -1,7 +1,8 @@
 # Entendimento do createStore
 
-<img src="./image.png"  />
-
+<div style="width: 100%; background: #dcdcdc; padding: 5px; border-radius: 5px">
+  <img src="./image.png"  />
+</div>
 ## Observação sobre os listeners
 
 Os listeners ficam ouvindo o observable e assim que houver uma mudança, eles são disparados.
