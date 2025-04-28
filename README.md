@@ -1,5 +1,7 @@
 # Entendimento do createStore
 
+<img src="./image.png"  />
+
 ## Observação sobre os listeners
 
 Os listeners ficam ouvindo o observable e assim que houver uma mudança, eles são disparados.
