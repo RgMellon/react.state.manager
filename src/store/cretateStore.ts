@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 type SetterFn<T> = (state: T) => Partial<T>;
 type SetStateFn<T> = (partialState: Partial<T> | SetterFn<T>) => void;
 
@@ -36,11 +38,32 @@ export function createStore<T>(
     return state;
   }
 
+  function useStore<TValue>(selector: (currentState: T) => TValue): TValue {
+    const [value, setValue] = useState(() => selector(state));
+
+    useEffect(() => {
+      const unsubscribe = subscribe(() => {
+        const newValue = selector(state);
+
+        if (value !== newValue) {
+          setValue(newValue);
+        }
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }, [selector, value]);
+
+    return value;
+  }
+
   state = createState(setState);
 
   return {
     setState,
     getState,
     subscribe,
+    useStore,
   };
 }
