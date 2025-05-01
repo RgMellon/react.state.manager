@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 type SetterFn<T> = (state: T) => Partial<T>;
 type SetStateFn<T> = (partialState: Partial<T> | SetterFn<T>) => void;
 
 export function createStore<T>(
-  createState: (setStateParam: SetStateFn<T>) => T,
+  createState: (setStateParam: SetStateFn<T>, getStateParam: () => T) => T,
 ) {
   let state: T;
 
@@ -39,31 +39,10 @@ export function createStore<T>(
   }
 
   function useStore<TValue>(selector: (currentState: T) => TValue): TValue {
-    const [value, setValue] = useState(() => selector(state));
-
-    useEffect(() => {
-      const unsubscribe = subscribe(() => {
-        const newValue = selector(state);
-
-        if (value !== newValue) {
-          setValue(newValue);
-        }
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }, [selector, value]);
-
-    return value;
+    return useSyncExternalStore(subscribe, () => selector(state));
   }
 
-  state = createState(setState);
+  state = createState(setState, getState);
 
-  return {
-    setState,
-    getState,
-    subscribe,
-    useStore,
-  };
+  return useStore;
 }

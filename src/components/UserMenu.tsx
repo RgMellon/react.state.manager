@@ -6,9 +6,9 @@ import { globalStore } from '../store/globalStore';
 export function UserMenu() {
   useRenderCounter('UserMenu');
 
-  const user = globalStore.useStore((selector) => selector.user);
-  const login = globalStore.useStore((selector) => selector.login);
-  const logout = globalStore.useStore((selector) => selector.logout);
+  const user = globalStore((selector) => selector.user);
+  const login = globalStore((selector) => selector.login);
+  const logout = globalStore((selector) => selector.logout);
 
   if (!user) {
     return (

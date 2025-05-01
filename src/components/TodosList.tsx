@@ -6,8 +6,8 @@ import {
   WindIcon,
 } from 'lucide-react';
 
-import { useGlobal } from '../contexts/GlobalContext';
 import { useRenderCounter } from '../hooks/useRenderCounter';
+import { globalStore } from '../store/globalStore';
 import { cn } from '../utils/cn';
 
 import { TodoForm } from './TodoForm';
@@ -15,7 +15,7 @@ import { TodoForm } from './TodoForm';
 export function TodosList() {
   useRenderCounter('TodosList');
 
-  const { todos, toggleTodoDone, removeTodo } = useGlobal();
+  const { todos } = globalStore((selector) => selector);
 
   return (
     <div className="container mx-auto my-10 rounded-lg border border-white/5 p-6">
@@ -57,7 +57,7 @@ export function TodosList() {
               </div>
 
               <div className="space-x-4">
-                <button
+                {/* <button
                   onClick={() => toggleTodoDone(todo.id)}
                   type="button"
                   className="opacity-80 transition-opacity hover:opacity-100"
@@ -70,7 +70,7 @@ export function TodosList() {
 
                 <button type="button" onClick={() => removeTodo(todo.id)}>
                   <Trash2Icon className="h-5 w-5 text-red-500 transition-colors hover:text-red-400" />
-                </button>
+                </button> */}
               </div>
             </li>
           ))}

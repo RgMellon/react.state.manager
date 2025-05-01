@@ -8,9 +8,10 @@ interface IGlobalStore {
   todos: ITodo[];
   login: () => void;
   logout: () => void;
+  addTodo(title: string, author?: string): void;
 }
 
-export const globalStore = createStore<IGlobalStore>((setState) => ({
+export const globalStore = createStore<IGlobalStore>((setState, getState) => ({
   todos: [],
   user: null,
   login: () =>
@@ -25,5 +26,16 @@ export const globalStore = createStore<IGlobalStore>((setState) => ({
     setState({
       user: null,
     });
+  },
+
+  addTodo: (title) => {
+    setState((prevState) => ({
+      todos: prevState.todos.concat({
+        id: Date.now(),
+        title,
+        author: getState().user?.name ?? 'Convidado',
+        done: false,
+      }),
+    }));
   },
 }));
